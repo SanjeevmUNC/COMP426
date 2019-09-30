@@ -9,7 +9,11 @@ import {variance} from "./data/stats_helpers";
  * prototype functions. Very useful
  */
 export function getSum(array) {
-
+    var sum = 0;
+    for (var i = 0; i < array.length; i++) {
+        sum = sum + array[i];
+    }
+    return sum;
 }
 
 
@@ -23,6 +27,13 @@ export function getSum(array) {
  * console.log(getMedian(array)); // 4.5
  */
 export function getMedian(array) {
+    var temp;
+    if (array.length % 2 == 1) {
+        temp = array[(array.length/2)-1+.5];
+    } else {
+        temp = (array[(array.length/2)] + array[(array.length/2)-1]) / 2
+    }
+    return temp;
 
 }
 
@@ -46,6 +57,24 @@ export function getMedian(array) {
  }
  */
 export function getStatistics(array) {
+    var stats = new Object();
+    stats['length'] = array.length;
+    stats['sum'] = getSum(array);
+    stats['mean'] = getSum(array)/array.length;
+    stats['median'] = getMedian(array);
+    stats['min'] = array[0];
+    stats['max'] = array[0];
+    for (var i = 0; i < array.length; i++) {
+        if (stats['min'] > array[i]) {
+            stats['min'] = array[i];
+        } 
+        if (stats['max'] < array[i]) {
+            stats['max'] = array[i];
+        }
+    }
+    stats['variance'] = variance(array, (getSum(array)/array.length)); 
+    stats['standard_deviation'] = Math.sqrt(variance(array, (getSum(array)/array.length)));
 
+    return stats;
 }
 

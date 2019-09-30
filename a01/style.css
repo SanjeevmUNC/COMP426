@@ -1,0 +1,64 @@
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+div {
+    padding: 20px;
+}
+
+h1 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #8CCBF2;
+}
+
+h2 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #8CCBF2;
+}
+
+p > div {
+    color: #8CCBF2;
+}
+
+p {
+    color: #FFFFFF;
+    border:1px solid #8CCBF2;
+    padding: 15px;
+}
+
+button {
+    width: 200px;
+    height: 200px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    align-self: center;
+    background: #000000;
+    border: #000000;
+    color: #FFFFFF;
+    
+}
+
+button:hover {
+    background-color: #0c3561;
+}
+
+img {
+    width: 50%;
+    height: 50%;
+    object-fit: contain;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#i {
+    font-size: 2px;
+}
+
+

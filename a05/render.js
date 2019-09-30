@@ -1,7 +1,7 @@
 /**
  * Course: COMP 426
  * Assignment: a05
- * Author: <type your name here>
+ * Author: Kayleigh Olecki
  *
  * This script uses jQuery to build an HTML page with content taken from the
  * data defined in data.js.
@@ -16,6 +16,16 @@
  */
 export const renderHeroCard = function(hero) {
     // TODO: Copy your code from a04 to render the hero card
+    return `<div id= "${hero.id}" class= "card" style="background-color:${hero.backgroundColor}; color: ${hero.color}">
+        <h1 class = "title has-text-weight-bold" style= "color: ${hero.color}">Hero Alias: <span>${hero.first} ${hero.last}</span></h1>
+            <h2 class="subtitle has-text-weight-bold"style= "color: ${hero.color}">
+                ${hero.name}: ${hero.subtitle}
+                <p>First Seen: ${hero.firstSeen}</p>
+            </h2>
+            <img src= ${hero.img}>
+            <p> ${hero.description}</p>
+            <button class="edit" value=${hero.id} onclick="handleEditButtonPress(event)"> Edit </button>
+    </div>`;
 };
 
 
@@ -27,7 +37,16 @@ export const renderHeroCard = function(hero) {
  * @param hero  The hero object to edit (see data.js)
  */
 export const renderHeroEditForm = function(hero) {
-    // TODO: Copy your code from a04 to render the hero edit form
+    return `<div class= "card" style="background-color:${hero.backgroundColor}; color: ${hero.color}">
+    <form id="${hero.id}" class="formclass" onsubmit="handleEditFormSubmit(event)">
+    <input id="first" class="input" type="text" value="${hero.first}"></input> 
+    <input id="last" class="input" type="text" value="${hero.last}"></input>
+    <input id="name" class="input" type="text" value="${hero.name}"></input>
+    <input id="firstSeen" class="input" type="text" value="${hero.firstSeen}"></input>
+    <textarea id="description">${hero.description}</textarea>
+    <button type="reset" class="cancel" value="${hero.id}" onclick="handleCancelButtonPress(event)"> Cancel </button> 
+    <button type="submit" class="save"> Submit </button>
+</form></div>`;
 };
 
 
@@ -40,6 +59,12 @@ export const renderHeroEditForm = function(hero) {
 export const handleEditButtonPress = function(event) {
     // TODO: Render the hero edit form for the clicked hero and replace the
     //       hero's card in the DOM with their edit form instead
+    // return renderHeroEditForm();
+    
+    var tmpObj=document.createElement("div");
+    tmpObj.innerHTML=renderHeroEditForm(heroicData.find(hero => hero.id == event.target.value));
+    document.getElementById(event.target.value).replaceWith(tmpObj);
+    return renderHeroEditForm(heroicData.find(hero => hero.id == event.target.value));
 };
 
 
@@ -52,6 +77,9 @@ export const handleEditButtonPress = function(event) {
 export const handleCancelButtonPress = function(event) {
     // TODO: Render the hero card for the clicked hero and replace the
     //       hero's edit form in the DOM with their card instead
+    var tmpObj=document.createElement("div");
+    tmpObj.innerHTML=renderHeroCard(heroicData.find(hero => hero.id == event.target.value));
+    document.getElementById(event.target.value).replaceWith(tmpObj);
 };
 
 
@@ -65,6 +93,29 @@ export const handleEditFormSubmit = function(event) {
     // TODO: Render the hero card using the updated field values from the
     //       submitted form and replace the hero's edit form in the DOM with
     //       their updated card instead
+    event.preventDefault();
+    const $root = $('#root');
+    let currHero = heroicData.find(x=>x.id==event.target.id);
+    currHero.name = $("input[id=name]").val();
+    currHero.first = $("input[id=first]").val();
+    currHero.last = $("input[id=last]").val();
+    currHero.description = $("textarea[id=description]").val();
+    var date = new Date($("input[id=firstSeen]").val());
+    var currHeroCard = renderHeroCard(currHero);
+    heroicData.forEach(hero => {
+        if (hero.id == currHero.id) {
+            hero.first = currHero.first;
+            hero.last = currHero.last;
+            hero.name = currHero.name;
+            hero.description = currHero.description;
+            hero.firstSeen = date;
+        }
+    });
+
+    $('#'+ currHero.id).replaceWith(currHeroCard);
+
+
+
 };
 
 
@@ -77,21 +128,18 @@ export const handleEditFormSubmit = function(event) {
 export const loadHeroesIntoDOM = function(heroes) {
     // Grab a jQuery reference to the root HTML element
     const $root = $('#root');
-
-    // TODO: Generate the heroes using renderHeroCard()
-    //       NOTE: Copy your code from a04 for this part
-
-    // TODO: Append the hero cards to the $root element
-    //       NOTE: Copy your code from a04 for this part
-
+    for (let i = 0; i < heroes.length; i++) {
+        $root.append(renderHeroCard(heroes[i]));
+    }
     // TODO: Use jQuery to add handleEditButtonPress() as an event handler for
-    //       clicking the edit button
-
+    //       clicking the edit butto
+    $root.on("click", ".edit", handleEditButtonPress);
     // TODO: Use jQuery to add handleEditFormSubmit() as an event handler for
     //       submitting the form
-
+    $root.on("click", ".cancel", handleCancelButtonPress);
     // TODO: Use jQuery to add handleCancelButtonPress() as an event handler for
     //       clicking the cancel button
+    $root.on("submit",".formclass", handleEditFormSubmit);
 };
 
 

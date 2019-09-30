@@ -6,7 +6,10 @@
  * returns: { type: 'number', value: 4 }
  */
 export function identifyVariable(variable) {
-
+   var identify = new Object();
+   identify['type'] = typeof variable;
+   identify['value'] = variable;
+   return identify;
 }
 
 
@@ -24,7 +27,11 @@ export function identifyVariable(variable) {
 
  */
 export function identifyArray(array) {
-
+   var identify = [];
+   for (var i = 0; i < array.length; i++) {
+      identify.push(identifyVariable(array[i]));
+   }
+   return identify;
 }
 
 /**
@@ -44,7 +51,7 @@ export function identifyArray(array) {
  obj now does not contain the `password` field
  */
 export function removeKey(object, key) {
-
+   return delete object[key];
 }
 
 /**
@@ -63,8 +70,19 @@ export function removeKey(object, key) {
  obj will not have the `password` field only because it was assigned the result of the function.
  If only `removeKeyNonDestructive` was called, nothing would have changed.
  */
-export function removeKeyNonDestructive(object, key) {
+export function clone(obj) {
+   if (null == obj || "object" != typeof obj) return obj;
+   var copy = obj.constructor();
+   for (var attr in obj) {
+       if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+   }
+   return copy;
+}
 
+export function removeKeyNonDestructive(object, key) {
+   var temp = clone(object);
+   delete temp[key];
+   return temp;
 }
 
 /**
@@ -89,5 +107,9 @@ export function removeKeyNonDestructive(object, key) {
  * @return {*} The object with its keys removed.
  */
 export function removeKeys(object, keyList) {
-
+   var temp = clone(object);
+   for (var i = 0; i < keyList.length; i++) {
+      delete temp[keyList[i]];
+   }
+   return temp;
 }
