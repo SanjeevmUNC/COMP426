@@ -1,17 +1,45 @@
 import keypress from 'keypress';
 import Game from "./engine/game";
 
+const game = new Game(4);
+// console.log(game);
+// game.move("down");
+// console.log(game);
+// game.move("left");
+// console.log(game);
+// game.move("right");
+// console.log(game);
+// game.move("up");
+// console.log(game);
+// game.move("down");
+// console.log(game);
+// game.move("left");
+// console.log(game);
+// game.move("right");
+// console.log(game);
+// game.move("up");
+// console.log(game);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 keypress(process.stdin);
 
 
-/**
- * The code in this file is used to run your game in the console. Use it
- * to help develop your game engine.
- *
- */
 
 let game = new Game(4);
-console.log(game.toString());
+// console.log(game.toString());
 
 game.onMove(gameState => {
     console.log(game.toString());

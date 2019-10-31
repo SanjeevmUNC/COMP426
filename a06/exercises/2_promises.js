@@ -19,7 +19,16 @@ import { heroData } from "./data";
 export function getHeroByIdPromise(heroData, id) {
   // 1. Return a new Promise object. See the assignment write-up for
   //    instructions of how to use the new Promise() constructor.
-
+ return new Promise(((resolve, reject) => {
+   var heroID = heroData.find(h=>h.id==id);
+   setTimeout(() => {  
+    if (heroID != undefined) {
+      resolve(heroID);
+    } else {
+      reject("Bad Hero");
+    }
+  }, 1500); 
+ }));
   // 2. Inside the Promise object's function, find the hero with the correct id
   //    in the heroData array.
 
@@ -34,7 +43,7 @@ export function getHeroByIdPromise(heroData, id) {
 
 
 // Uncomment this code to locally run your getHeroByIdCallback() function
-/*
+
 const hero2 = getHeroByIdPromise(heroData, 2)
   .then(hero => {
     console.log(`Found the hero with id ${hero.id}`, hero);
@@ -44,7 +53,7 @@ const hero2 = getHeroByIdPromise(heroData, 2)
   });
 console.log(`logging hero2 and should be a promise ${hero2}`);
 
-
+/*
 const heroError = getHeroByIdPromise(heroData, 20)
   .then(hero => {
     console.log(`Found the hero with id ${hero.id}`, hero);
