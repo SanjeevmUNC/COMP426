@@ -12,7 +12,7 @@ export async function makeTweet() {
         if (result.data[i]["isMine"] == true) {
         tweets += `<div class="tweet">
         <h2>${result.data[i]["author"]}<button class="edit" id="${result.data[i]["id"]}" value="${result.data[i]["body"]}">Edit</button>
-        <button class="delete" id="${result.data[i]["id"]}">Delete</button></p></h2>
+        <button class="delete" id="${result.data[i]["id"]}">Delete</button></h2>
         <p>${result.data[i]["body"]}</p>
         <p>Likes: ${result.data[i]["likeCount"]}  
         <button class="like" id="${result.data[i]["id"]}" value="${result.data[i]["isLiked"]}"><3</button>  
@@ -27,7 +27,7 @@ export async function makeTweet() {
         <p>Likes: ${result.data[i]["likeCount"]}  
         <button class="like" id="${result.data[i]["id"]}" value="${result.data[i]["isLiked"]}"><3</button>  
         Replies:  ${result.data[i]["replyCount"]} <button id="${result.data[i]["id"]}" class="reply">Reply</button>
-        Retweets:  ${result.data[i]["retweetCount"]} <button id="${result.data[i]["id"]}" class="retweet">Retweet</button> </p>
+        Retweets:  ${result.data[i]["retweetCount"]} <button value="${result.data[i]["id"]}" class="retweet">Retweet</button> </p>
         <div id="${result.data[i]["id"]}"></div></div>`;
         }
         
@@ -69,7 +69,7 @@ export async function editTweet(event) {
     $('div[id='+ event.target.id +']').html(`<form id="${event.target.id}" class="editForm">
     <textarea id="edit">${event.target.value}</textarea>
     <button id="${event.target.id}" class="editsubmit" type="submit">Submit</button></form>`);
-    $(document).on("submit", ".editsubmit", submitEdit);
+    
 }
 
 export async function submitEdit(event) {
@@ -88,16 +88,16 @@ export async function submitEdit(event) {
     $('#tweets').replaceWith(makeTweet());
 }
 
-async function replyTweet(event) {
+export async function replyTweet(event) {
     $('div[id='+ event.target.id +']').html(`<form id="${event.target.id}" class="replyForm">
     <textarea id="reply">Enter Your Reply...</textarea>
     <button id="${event.target.id}" class="replySubmit" type="submit">Submit</button></form>`);
 }
 
-async function submitReply(event) {
+export async function submitReply(event) {
     event.preventDefault();
-    $('div[id='+ event.target.id +']').html(``);
     let string = "" + $("textarea[id=reply]").val() + "";
+    $('div[id='+ event.target.id +']').html(``);
     let link = "https://comp426fa19.cs.unc.edu/a09/tweets";
     const result = await axios({
         method: 'post',
@@ -112,16 +112,23 @@ async function submitReply(event) {
       $('#tweets').replaceWith(makeTweet());
 }
 
-async function retweet(event){
-    $('div[id='+ event.target.id +']').html(`<form id="${event.target.id}" class="retweetForm">
-    <textarea id="reet">Enter Your Retweet...</textarea>
+export async function retweet(event){
+    $('div[id='+ event.target.value +']').html(`<form id="${event.target.value}" class="retweetForm">
+    <textarea id="garbage"> Retweet Here... </textarea>
     <button type="submit" class="submitRetweet">Submit</button></form>`);
+    
 }
 
-async function submitRetweet(event) {
+export async function submitRetweet(event) {
     event.preventDefault();
+    const results = await axios({
+        method: 'get',
+        url: 'https://comp426fa19.cs.unc.edu/a09/tweets',
+        withCredentials: true,
+      });
+    let post = results.data.find(x => x.id == event.target.id);
+    let string = "" + $('textarea#garbage').val() + "";
     $('div[id='+ event.target.id +']').html(``);
-    let string = "" + $("textarea[id=reet]").val() + ""; //this is returning undefined for some reason...
     const result = await axios({
         method: 'post',
         url: 'https://comp426fa19.cs.unc.edu/a09/tweets',
@@ -129,22 +136,21 @@ async function submitRetweet(event) {
         data: {
           "type": "retweet",
           "parent": event.target.id,
-          "body": string
+          "body": `${string}<br><div><h3>${post["author"]}</h3><p>${post["body"]}</p></div>`,
         },
       });
     $('#tweets').replaceWith(makeTweet());
 }
 
 
-async function composeTweet(event) {
-    const $root = $('#root');
+export async function composeTweet(event) {
     event.preventDefault();
     const result = await axios({
         method: 'post',
         url: 'https://comp426fa19.cs.unc.edu/a09/tweets',
         data: {
             "type": "tweet",
-            "body":  $("textarea[id=body]").val(),
+            "body":  "" + $("textarea[id=body]").val() + "",
           },
         withCredentials: true,
       });
@@ -155,7 +161,7 @@ async function composeTweet(event) {
 
 export const renderSite = function() {
     const $root = $('#root');
-    $root.append(`<div id="form">
+    $root.append(`<div class="start">
     <form class="form">
         <label>Compose New Tweet</label><br>
         <textarea id="body">Enter Text Message Here...</textarea>
@@ -165,12 +171,17 @@ export const renderSite = function() {
     makeTweet();
 
     $(document).on("submit", ".form", composeTweet);
+
     $(document).on("click", ".like", likeTweet);
+
     $(document).on("click", ".delete", deleteTweet);
+
     $(document).on("click", ".edit", editTweet);
     $(document).on("submit", ".editForm", submitEdit);
+
     $(document).on("click", ".reply", replyTweet);
     $(document).on("submit", ".replyForm", submitReply);
+
     $(document).on("click", ".retweet", retweet);
     $(document).on("submit", ".retweetForm", submitRetweet);
 
